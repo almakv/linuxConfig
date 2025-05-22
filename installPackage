@@ -2,3 +2,25 @@
 go pyhton deggubers for py,go 
 vscode, pycharm, dataspell, datagrip, intelliJ Idea, blender, telegram, gitKracken, postman, postgres 17, pyAdmin 4, yandex, chrome, brave, nekoray, 
 GNOME SET
+
+# Массив названий пакетов  
+packages=(  
+  git  
+  curl  
+  vim  
+  htop  
+  tree  
+  unzip  
+  python3  
+  python3-pip  
+  nodejs  
+  npm  
+  docker.io  
+  build-essential  
+  ufw  
+  zsh  
+  fish  
+  tlp  
+  tlp-rdw  
+  unattended-upgrades  
+)  
