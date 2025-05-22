@@ -11,10 +11,6 @@ sudo apt update && sudo apt upgrade -y
 sudo apt autoremove -y
 sudo apt clean
 
-echo "=== 3. Установка основных утилит ==="
-
-
-
 echo "=== 4. Настройка git ==="
 read -p "Введите ваше имя для git: " gitname
 git config --global user.name "$gitname"
@@ -32,19 +28,19 @@ else
   echo "SSH-ключ уже существует: ~/.ssh/id_ed25519"
 fi
 
-echo "=== 8. Автоматизация обновлений ==="
+echo "=== 4. Автоматизация обновлений ==="
 sudo dpkg-reconfigure --priority=low unattended-upgrades
 
-echo "=== 9. Добавление пользователя в группу docker ==="
+echo "=== 5. Добавление пользователя в группу docker ==="
 sudo usermod -aG docker $USER
 
-echo "=== 10. Настройка временной зоны ==="
+echo "=== 6. Настройка временной зоны ==="
 sudo dpkg-reconfigure tzdata
 
-echo "=== 11. Проверка и вывод локали ==="
+echo "=== 7. Проверка и вывод локали ==="
 locale
 
-echo "=== 12. Установка Fish Shell по умолчанию ==="
+echo "=== 8. Установка Fish Shell по умолчанию ==="
 chsh -s /usr/bin/fish
 echo "==== Дефолтная оболочка изменена на fish. Перезапустите терминал для применения. ===="
 
