@@ -12,7 +12,8 @@ sudo apt autoremove -y
 sudo apt clean
 
 echo "=== 3. Установка основных утилит ==="
-sudo apt install -y git curl vim htop tree unzip python3 python3-pip nodejs npm docker.io build-essential ufw zsh fish tlp tlp-rdw unattended-upgrades
+
+
 
 echo "=== 4. Настройка git ==="
 read -p "Введите ваше имя для git: " gitname
@@ -31,14 +32,6 @@ else
   echo "SSH-ключ уже существует: ~/.ssh/id_ed25519"
 fi
 
-echo "=== 6. Безопасность: включение firewall ==="
-sudo ufw enable
-sudo ufw status
-
-echo "=== 7. Улучшение энергосбережения для ноутбуков ==="
-sudo systemctl enable tlp
-sudo systemctl start tlp
-
 echo "=== 8. Автоматизация обновлений ==="
 sudo dpkg-reconfigure --priority=low unattended-upgrades
 
@@ -55,14 +48,4 @@ echo "=== 12. Установка Fish Shell по умолчанию ==="
 chsh -s /usr/bin/fish
 echo "==== Дефолтная оболочка изменена на fish. Перезапустите терминал для применения. ===="
 
-echo "=== 13. (По желанию) Отключение root по SSH (если сервер) ==="
-SSHD_CONFIG="/etc/ssh/sshd_config"
-if grep -Eq "^PermitRootLogin yes" $SSHD_CONFIG; then
-  sudo sed -i 's/^PermitRootLogin yes/PermitRootLogin no/' $SSHD_CONFIG
-  sudo systemctl restart ssh
-  echo "Root-доступ по SSH отключен."
-else
-  echo "Отключение root по SSH не требуется или уже настроено."
-fi
-
-echo "=== Базовая настройка завершена. Не забудьте перезагрузить систему! ==="
+echo "=== Базовая настройка завершена. Не забудьте перезагрузить систему командой reboot! ==="
