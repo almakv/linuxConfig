@@ -1,26 +1,90 @@
+#!/usr/bin/env bash
+set -e
 
-go pyhton deggubers for py,go 
-vscode, pycharm, dataspell, datagrip, intelliJ Idea, blender, telegram, gitKracken, postman, postgres 17, pyAdmin 4, yandex, chrome, brave, nekoray, 
-GNOME SET
+# Проверка на sudo
+if [[ $EUID -ne 0 ]]; then
+  echo "Запустите от имени root или через sudo"
+  exit 1
+fi
 
-# Массив названий пакетов  
-packages=(  
-  git  
-  curl  
-  vim  
-  htop  
-  tree  
-  unzip  
-  python3  
-  python3-pip  
-  nodejs  
-  npm  
-  docker.io  
-  build-essential  
-  ufw  
-  zsh  
-  fish  
-  tlp  
-  tlp-rdw  
-  unattended-upgrades  
-)  
+# Подготовка
+UBU_CODENAME=$(lsb_release -cs)
+echo "Обновляем списки и ставим базовые утилиты..."
+apt update
+apt install -y curl wget gnupg2 software-properties-common \
+               apt-transport-https ca-certificates lsb-release
+
+# Массивы пакетов
+APT_PACKAGES=(
+  code                    # VS Code
+  google-chrome-stable    # Chrome
+  brave-browser           # Brave
+  yandex-browser-beta     # Yandex Browser
+  postgresql-17           # PostgreSQL 17
+  pgadmin4                # pgAdmin4 (web)
+  pgadmin4-desktop        # pgAdmin4 (desktop)
+)
+
+SNAP_PACKAGES=(
+  pycharm-community   # PyCharm
+  datagrip            # DataGrip
+  dataspell           # DataSpell
+  intellij-idea-community
+  blender
+  telegram-desktop
+  postman
+  --classic gitkraken
+)
+
+# Репозитории для APT-пакетов
+echo "Добавляем репозитории..."
+
+# VS Code
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc \
+  | gpg --dearmor > /usr/share/keyrings/vscode.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/vscode.gpg] \
+https://packages.microsoft.com/repos/code stable main" \
+  > /etc/apt/sources.list.d/vscode.list
+
+# Google Chrome
+wget -O /tmp/google-chrome.deb \
+  https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+dpkg -i /tmp/google-chrome.deb || true
+
+# Brave
+curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
+  https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] \
+https://brave-browser-apt-release.s3.brave.com/ stable main" \
+  > /etc/apt/sources.list.d/brave-browser-release.list
+
+# Yandex Browser
+wget -qO- https://repo.yandex.ru/yandex-browser/YANDEX-ARCHIVE-KEY.GPG \
+  | apt-key add -
+echo "deb http://repo.yandex.ru/yandex-browser/deb stable main" \
+  > /etc/apt/sources.list.d/yandex-browser.list
+
+# PostgreSQL & pgAdmin
+wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+echo "deb http://apt.postgresql.org/pub/repos/apt \
+  $UBU_CODENAME-pgdg main" \
+  > /etc/apt/sources.list.d/pgdg.list
+
+# Обновляем и ставим APT-пакеты
+echo "Устанавливаем APT-пакеты..."
+apt update
+apt install -y "${APT_PACKAGES[@]}" \
+  || apt -f install -y
+
+# Устанавливаем snap-пакеты
+echo "Устанавливаем snap-пакеты..."
+for pkg in "${SNAP_PACKAGES[@]}"; do
+  snap install $pkg
+done
+
+# Финальная чистка
+echo "Очистка..."
+apt autoremove -y
+apt clean
+
+echo "Готово! Всё установленно."
